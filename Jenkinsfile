@@ -6,7 +6,7 @@ pipeline {
         IMAGE_TAG = "${BUILD_NUMBER}"
 
         // Set your Docker Hub credentials
-        DOCKER_HUB_CREDENTIALS = credentials('dockerhub_mehedi4475')
+        DOCKER_HUB_CREDENTIALS = credentials('docker_hub_mehedi4475')
         // Set your Docker image details
         DOCKER_IMAGE_NAME = 'mehedi4475/cicd-e2e'
         DOCKER_IMAGE_TAG = 'latest'
