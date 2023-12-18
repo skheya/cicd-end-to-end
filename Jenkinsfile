@@ -4,14 +4,20 @@ pipeline {
     
     environment {
         IMAGE_TAG = "${BUILD_NUMBER}"
+
+        // Set your Docker Hub credentials
+        DOCKER_HUB_CREDENTIALS = credentials('dockerhub_mehedi4475')
+        // Set your Docker image details
+        DOCKER_IMAGE_NAME = 'mehedi4475/cicd-e2e'
+        DOCKER_IMAGE_TAG = 'latest'
     }
     
     stages {
         
         stage('Checkout'){
            steps {
-                git credentialsId: 'github_username_and_password', 
-                url: 'https://github.com/skheya/cicd-end-to-end',
+                git credentialsId: 'f87a34a8-0e09-45e7-b9cf-6dc68feac670', 
+                url: 'https://github.com/iam-veeramalla/cicd-end-to-end',
                 branch: 'main'
            }
         }
@@ -21,22 +27,29 @@ pipeline {
                 script{
                     sh '''
                     echo 'Buid Docker Image'
-                    docker build -t mehedi4475/cicd-e2e:${BUILD_NUMBER} .
-                    '''
-                }
-            }
-        }
-
-        stage('Push the artifacts'){
-           steps{
-                script{
-                    sh '''
-                    echo 'Push to Repo'
-                    docker push mehedi4475/cicd-e2e:${BUILD_NUMBER}
+                    docker build -t abhishekf5/cicd-e2e:${BUILD_NUMBER} .
                     '''
                 }
             }
         }
         
+
+        stage('Push the artifacts'){ 
+
+           steps {
+                script {
+                    // Build the Docker image
+                    docker.build("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}")
+
+                    // Log in to Docker Hub
+                    docker.withRegistry('https://registry.hub.docker.com', DOCKER_HUB_CREDENTIALS) {
+                        // Push the Docker image to Docker Hub
+                        docker.image("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").push()
+                    }
+                }
+            }
+        }
+        
+    
     }
 }
