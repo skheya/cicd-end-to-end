@@ -25,55 +25,55 @@ pipeline {
     
     stages {
 
-        // stage('Clear Work Space'){
-        //     steps{
-        //         cleanWs()
-        //     }
-        // }
+        stage('Clear Work Space'){
+            steps{
+                cleanWs()
+            }
+        }
         
-        // stage('Checkout'){
-        //    steps {
-        //         git credentialsId: "${GITHUB_CREDENTIALS}", 
-        //         url: "${GITHUB_CI_PATH}",
-        //         branch: 'main'
-        //    }
-        // }
+        stage('Checkout'){
+           steps {
+                git credentialsId: "${GITHUB_CREDENTIALS}", 
+                url: "${GITHUB_CI_PATH}",
+                branch: 'main'
+           }
+        }
 
-        // stage('Build Docker'){
-        //     steps{
-        //         script{
-        //             sh '''
-        //             echo 'Buid Docker Image'
-        //             docker build -t ${DOCKERHUB_USERNAME}/${APP_NAME}:${BUILD_NUMBER} .
-        //             '''
-        //         }
-        //     }
-        // }
+        stage('Build Docker'){
+            steps{
+                script{
+                    sh '''
+                    echo 'Buid Docker Image'
+                    docker build -t ${DOCKERHUB_USERNAME}/${APP_NAME}:${BUILD_NUMBER} .
+                    '''
+                }
+            }
+        }
 
-        // stage('Push the artifacts'){
+        stage('Push the artifacts'){
 
-        //    steps {
-        //         script {
-        //             // Build the Docker image
-        //             docker.build("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}")
+           steps {
+                script {
+                    // Build the Docker image
+                    docker.build("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}")
 
-        //             // Log in to Docker Hub
-        //             docker.withRegistry('https://registry.hub.docker.com', DOCKER_HUB_CREDENTIALS) {
-        //                 // Push the Docker image to Docker Hub
-        //                 docker.image("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").push()
-        //             }
-        //         }
-        //     }
-        // }
+                    // Log in to Docker Hub
+                    docker.withRegistry('https://registry.hub.docker.com', DOCKER_HUB_CREDENTIALS) {
+                        // Push the Docker image to Docker Hub
+                        docker.image("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").push()
+                    }
+                }
+            }
+        }
 
-        // stage('Delete Docker Build Image'){
-        //     steps{
-        //         script{
-        //             sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
-        //             sh "docker rmi ${IMAGE_NAME}:latest"
-        //         }
-        //     }
-        // }
+        stage('Delete Docker Build Image'){
+            steps{
+                script{
+                    sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
+                    sh "docker rmi ${IMAGE_NAME}:latest"
+                }
+            }
+        }
         
         stage('Checkout K8S manifest SCM'){
             steps {
@@ -94,7 +94,7 @@ pipeline {
                         git config --global user.name "Mehedi Hasan"
 
                         cat deploy.yaml
-                        sed -i 's/mehedi4475/todo-app:.*/${APP_NAME}:${IMAGE_TAG}/g' deploy.yaml
+                        sed -i "s/${APP_NAME}:.*/${APP_NAME}:${BUILD_NUMBER}/g" deploy.yaml
                         cat deploy.yaml
                         git add deploy.yaml
                         git commit -m 'Updated the deploy yaml | Jenkins Pipeline'
