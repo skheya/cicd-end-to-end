@@ -24,6 +24,10 @@ pipeline {
     }
     
     stages {
+
+        stage('Clear Work Space'){
+            cleanWs()
+        }
         
         stage('Checkout'){
            steps {
@@ -56,6 +60,15 @@ pipeline {
                         // Push the Docker image to Docker Hub
                         docker.image("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").push()
                     }
+                }
+            }
+        }
+
+        stage('Delete Docker Build Image'){
+            steps{
+                script{
+                    sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
+                    sh "docker rmi ${IMAGE_NAME}:latest"
                 }
             }
         }
