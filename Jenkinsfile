@@ -89,6 +89,10 @@ pipeline {
                 script{
                     withCredentials([gitUsernamePassword(credentialsId: "${GITHUB_CREDENTIALS}", gitToolName: 'Default')]) {
                         sh '''
+
+                        git config --global user.email "mehedi4475@gmail.com"
+                        git config --global user.name "Mehedi Hasan"
+
                         cat deploy.yaml
                         sed -i 's/${APP_NAME}.*/${APP_NAME}:${IMAGE_TAG}/g' deploy.yaml
                         cat deploy.yaml
