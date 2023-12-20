@@ -3,7 +3,11 @@ pipeline {
     agent any 
     
     environment {
-        IMAGE_TAG = "${BUILD_NUMBER}"
+        DOCKERHUB_USERNAME = "mehedi4475"
+        APP_NAME = "todo-service"
+        IMAGE_TAG = "${BUILD_NUMBER}"        
+        IMAGE_NAME = "${DOCKERHUB_USERNAME}" + "/" + "${APP_NAME}"
+        REGISTRY_CREDS = "dockerhub"
         
         //Set Github Credentials
         
@@ -14,7 +18,7 @@ pipeline {
         
         
         // Set your Docker image details
-        DOCKER_IMAGE_NAME = 'mehedi4475/cicd-e2e'
+        DOCKER_IMAGE_NAME = '${DOCKERHUB_USERNAME}/${APP_NAME}'
         DOCKER_IMAGE_TAG = 'latest'
     }
     
@@ -33,7 +37,7 @@ pipeline {
                 script{
                     sh '''
                     echo 'Buid Docker Image'
-                    docker build -t mehedi4475/cicd-e2e:${BUILD_NUMBER} .
+                    docker build -t ${DOCKERHUB_USERNAME}/${APP_NAME}:${BUILD_NUMBER} .
                     '''
                 }
             }
@@ -70,7 +74,7 @@ pipeline {
                     withCredentials([gitUsernamePassword(credentialsId: 'github_username_and_password', gitToolName: 'Default')]) {
                         sh '''
                         cat deploy.yaml
-                        sed -i '' "s/32/${BUILD_NUMBER}/g" deploy.yaml
+                        sed -i 's/${APP_NAME}.*/${APP_NAME}:${IMAGE_TAG}/g' deploy.yml
                         cat deploy.yaml
                         git add deploy.yaml
                         git commit -m 'Updated the deploy yaml | Jenkins Pipeline'
