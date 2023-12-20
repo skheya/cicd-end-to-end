@@ -94,7 +94,7 @@ pipeline {
                         git config --global user.name "Mehedi Hasan"
 
                         cat deploy.yaml
-                        sed -i "s/mehedi4475/todo-app:.*/${APP_NAME}:${IMAGE_TAG}/g" deploy.yaml
+                        sed -i 's/mehedi4475/todo-app:.*/${APP_NAME}:${IMAGE_TAG}/g' deploy.yaml
                         cat deploy.yaml
                         git add deploy.yaml
                         git commit -m 'Updated the deploy yaml | Jenkins Pipeline'
